@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The NO CAPTIVE Cost Calculator | Vanguard Captive Management</title>
+<style>
+  :root{
+    --surface: #eef1f4;
+    --surface-card: #ffffff;
+    --surface-card-2: #f6f8fa;
+    --surface-sunken: #e3e8ec;
+    --ink-primary: #10181f;
+    --ink-secondary: #45525e;
+    --ink-muted: #71808c;
+    --border: #d7dee4;
+    --border-strong: #c1cbd3;
+    --brand-navy: #0c3b78;
+    --brand-sky: #19b2e3;
+    --accent: #0b7ea6;
+    --accent-ink: #ffffff;
+    --accent-soft: #dcf0f8;
+    --lever-spread: #2b5ea8;
+    --lever-sales: #c97a2e;
+    --lever-retention: #0e93c4;
+    --lever-brand: #a8467a;
+    --good: #1f8f5f;
+    --warning: #b3860c;
+    --critical: #bf3b2b;
+    --shadow: 0 1px 2px rgba(16,24,31,0.06), 0 8px 24px -12px rgba(16,24,31,0.18);
+    --radius: 10px;
+    --font-display: Iowan Old Style, Sitka Text, "Source Serif Pro", Georgia, "Times New Roman", serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --surface: #0c1116;
+      --surface-card: #131a21;
+      --surface-card-2: #1a232c;
+      --surface-sunken: #0f151b;
+      --ink-primary: #e8edf2;
+      --ink-secondary: #aab6c0;
+      --ink-muted: #7c8894;
+      --border: #2a333c;
+      --border-strong: #384049;
+      --brand-navy: #0c3b78;
+      --brand-sky: #19b2e3;
+      --accent: #35b8e8;
+      --accent-ink: #052029;
+      --accent-soft: #123244;
+      --lever-spread: #5988cc;
+      --lever-sales: #c4813f;
+      --lever-retention: #1d8fbd;
+      --lever-brand: #c06a9a;
+      --good: #3fbf87;
+      --warning: #d9b84a;
+      --critical: #e0685c;
+      --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 8px 24px -12px rgba(0,0,0,0.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --surface: #0c1116; --surface-card: #131a21; --surface-card-2: #1a232c; --surface-sunken: #0f151b;
+    --ink-primary: #e8edf2; --ink-secondary: #aab6c0; --ink-muted: #7c8894;
+    --border: #2a333c; --border-strong: #384049;
+    --brand-navy: #0c3b78; --brand-sky: #19b2e3;
+    --accent: #35b8e8; --accent-ink: #052029; --accent-soft: #123244;
+    --lever-spread: #5988cc; --lever-sales: #c4813f; --lever-retention: #1d8fbd; --lever-brand: #c06a9a;
+    --good: #3fbf87; --warning: #d9b84a; --critical: #e0685c;
+    --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 8px 24px -12px rgba(0,0,0,0.6);
+  }
+  :root[data-theme="light"]{
+    --surface: #eef1f4; --surface-card: #ffffff; --surface-card-2: #f6f8fa; --surface-sunken: #e3e8ec;
+    --ink-primary: #10181f; --ink-secondary: #45525e; --ink-muted: #71808c;
+    --border: #d7dee4; --border-strong: #c1cbd3;
+    --brand-navy: #0c3b78; --brand-sky: #19b2e3;
+    --accent: #0b7ea6; --accent-ink: #ffffff; --accent-soft: #dcf0f8;
+    --lever-spread: #2b5ea8; --lever-sales: #c97a2e; --lever-retention: #0e93c4; --lever-brand: #a8467a;
+    --good: #1f8f5f; --warning: #b3860c; --critical: #bf3b2b;
+    --shadow: 0 1px 2px rgba(16,24,31,0.06), 0 8px 24px -12px rgba(16,24,31,0.18);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--surface);
+    color:var(--ink-primary);
+    font-family:var(--font-body);
+    font-size:15px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 64px;}
+
+  /* ---------- Header ---------- */
+  .masthead{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px;}
+  .brandmark{display:flex;align-items:center;gap:10px;}
+  .brandmark .mark{
+    width:30px;height:30px;border-radius:7px;color:#ffffff;
+    background:linear-gradient(135deg, var(--brand-navy) 0%, var(--brand-navy) 58%, var(--brand-sky) 58%, var(--brand-sky) 100%);
+    display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:15px;flex:none;
+  }
+  .brandmark .name{font-size:12.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-muted);font-weight:600;}
+  .betapill{font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-muted);border:1px solid var(--border-strong);border-radius:100px;padding:3px 9px;}
+  h1.title{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(26px,3.4vw,38px);
+    letter-spacing:-0.01em;
+    margin:10px 0 8px;
+    text-wrap:balance;
+  }
+  h1.title .hl{color:var(--lever-sales);}
+  p.dek{color:var(--ink-secondary);font-size:15.5px;max-width:62ch;margin:0 0 28px;}
+
+  /* ---------- Layout ---------- */
+  .stage{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:20px;align-items:start;}
+  @media (max-width:860px){ .stage{grid-template-columns:1fr;} }
+
+  .card{
+    background:var(--surface-card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+  .panel-input{padding:20px 20px 22px;position:sticky;top:20px;}
+  @media (max-width:860px){ .panel-input{position:static;} }
+
+  .field{margin-bottom:18px;}
+  .field label.flabel{display:block;font-size:12.5px;font-weight:600;color:var(--ink-secondary);margin-bottom:7px;letter-spacing:0.01em;}
+  .field .fhint{font-size:12px;color:var(--ink-muted);margin-top:5px;}
+
+  select.finput, input.finput{
+    width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border-strong);
+    background:var(--surface-card-2);color:var(--ink-primary);font-family:var(--font-body);font-size:14.5px;
+  }
+  select.finput:focus, input.finput:focus{outline:2px solid var(--accent);outline-offset:1px;}
+
+  .dollar-input{position:relative;}
+  .dollar-input .prefix{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-muted);font-size:14.5px;pointer-events:none;}
+  .dollar-input input{padding-left:26px;font-variant-numeric:tabular-nums;}
+
+  .stage-options{display:grid;gap:8px;}
+  .stage-card{
+    border:1.5px solid var(--border-strong);border-radius:9px;padding:10px 12px;cursor:pointer;
+    background:var(--surface-card-2);transition:border-color .15s ease, background .15s ease;
+  }
+  .stage-card:hover{border-color:var(--accent);}
+  .stage-card.selected{border-color:var(--accent);background:var(--accent-soft);}
+  .stage-card .stitle{font-size:13.5px;font-weight:600;display:flex;align-items:center;gap:7px;}
+  .stage-card .sdesc{font-size:12px;color:var(--ink-muted);margin-top:3px;}
+  .stage-card input{position:absolute;opacity:0;pointer-events:none;}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--border-strong);flex:none;}
+  .stage-card.selected .dot{background:var(--accent);}
+
+  details.refine{margin:16px 0 20px;border-top:1px solid var(--border);padding-top:14px;}
+  details.refine summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--ink-secondary);list-style:none;display:flex;align-items:center;gap:6px;}
+  details.refine summary::-webkit-details-marker{display:none;}
+  details.refine summary::before{content:"▸";font-size:10px;color:var(--ink-muted);transition:transform .15s ease;}
+  details.refine[open] summary::before{transform:rotate(90deg);}
+  .refine-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+  .refine-grid .field{margin-bottom:0;}
+  .refine-grid .flabel{font-size:11.5px;}
+
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    background:var(--accent);color:var(--accent-ink);border:none;border-radius:8px;
+    font-family:var(--font-body);font-weight:600;font-size:14.5px;padding:12px 18px;cursor:pointer;
+    width:100%;transition:filter .15s ease, transform .05s ease;
+  }
+  .btn:hover{filter:brightness(1.08);}
+  .btn:active{transform:translateY(1px);}
+  .btn:disabled{opacity:0.55;cursor:not-allowed;}
+  .btn.ghost{background:transparent;color:var(--ink-primary);border:1.5px solid var(--border-strong);}
+  .btn.ghost:hover{border-color:var(--accent);filter:none;}
+
+  /* ---------- Results stage ---------- */
+  .panel-result{min-height:520px;position:relative;overflow:hidden;}
+  .empty-state{
+    height:520px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    color:var(--ink-muted);padding:40px;gap:10px;
+  }
+  .empty-state .glyph{font-size:34px;opacity:0.5;font-family:var(--font-display);}
+  .empty-state h3{margin:0;font-size:15px;color:var(--ink-secondary);font-weight:600;}
+  .empty-state p{margin:0;font-size:13px;max-width:40ch;}
+
+  .result-body{padding:26px 26px 24px;display:none;}
+  .result-body.show{display:block;}
+
+  .stage-chip{
+    display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;
+    text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-secondary);
+    border:1px solid var(--border-strong);border-radius:100px;padding:4px 10px 4px 8px;margin-bottom:16px;
+  }
+  .stage-chip .dot{width:7px;height:7px;border-radius:50%;}
+
+  .hero-figure{margin-bottom:6px;}
+  .hero-figure .amount{
+    font-family:var(--font-display);font-weight:600;letter-spacing:-0.015em;
+    font-size:clamp(38px,5.4vw,60px);line-height:1.02;font-variant-numeric:tabular-nums;
+  }
+  .hero-figure .amount .accent-num{color:var(--lever-spread);}
+  .hero-figure .label{font-size:14px;color:var(--ink-secondary);margin-top:6px;}
+
+  .divider{height:1px;background:var(--border);margin:22px 0;border:none;}
+
+  h2.sec-title{font-size:12.5px;text-transform:uppercase;letter-spacing:0.07em;color:var(--ink-muted);font-weight:700;margin:0 0 14px;}
+
+  .breakdown-bar{
+    display:flex;width:100%;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--border);
+  }
+  .breakdown-bar .seg{height:100%;position:relative;}
+  .breakdown-legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:14px;}
+  .leg-item{display:flex;gap:9px;align-items:flex-start;}
+  .leg-swatch{width:11px;height:11px;border-radius:3px;margin-top:3px;flex:none;}
+  .leg-item .lname{font-size:12.5px;font-weight:600;color:var(--ink-primary);}
+  .leg-item .lval{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;font-family:var(--font-display);}
+  .leg-item .lsub{font-size:11.5px;color:var(--ink-muted);}
+
+  /* spectrum */
+  .spectrum{margin-top:6px;}
+  .spectrum-track{position:relative;height:8px;border-radius:100px;background:var(--surface-sunken);
+    background-image:linear-gradient(to right, var(--critical), var(--warning) 45%, var(--good));
+    opacity:0.85; margin:34px 4px 10px;}
+  .spectrum-labels{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-muted);padding:0 2px;text-transform:uppercase;letter-spacing:0.04em;}
+  .marker{position:absolute;top:50%;transform:translate(-50%,-50%);}
+  .marker .pin{width:16px;height:16px;border-radius:50%;background:var(--ink-primary);border:3px solid var(--surface-card);box-shadow:0 0 0 1.5px var(--border-strong);}
+  .marker .pinlabel{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;white-space:nowrap;color:var(--ink-primary);background:var(--surface-card-2);padding:3px 8px;border-radius:6px;border:1px solid var(--border);}
+  .marker.ghost .pin{background:var(--accent);border-color:var(--surface-card);}
+  .marker.ghost .pinlabel{color:var(--accent);border-color:var(--accent-soft);}
+
+  .recover-callout{
+    display:flex;align-items:center;gap:14px;background:var(--accent-soft);border:1px solid var(--accent);
+    border-radius:9px;padding:14px 16px;margin-top:22px;
+  }
+  .recover-callout .rc-amt{font-family:var(--font-display);font-weight:700;font-size:20px;color:var(--accent);font-variant-numeric:tabular-nums;flex:none;}
+  .recover-callout .rc-text{font-size:13px;color:var(--ink-primary);}
+
+  .cta-row{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap;}
+  .cta-row .btn{width:auto;flex:1 1 220px;}
+
+  details.methodology{margin-top:22px;border-top:1px solid var(--border);padding-top:16px;}
+  details.methodology summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--ink-secondary);list-style:none;}
+  details.methodology summary::-webkit-details-marker{display:none;}
+  details.methodology summary::before{content:"▸ ";font-size:10px;color:var(--ink-muted);}
+  details.methodology[open] summary::before{content:"▾ ";}
+  .method-body{font-size:12.5px;color:var(--ink-secondary);margin-top:12px;}
+  .method-body dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:10px 0;}
+  .method-body dt{font-weight:600;color:var(--ink-primary);}
+  .method-body dd{margin:0;}
+  .method-body ul{margin:8px 0;padding-left:18px;}
+
+  .footnote{font-size:11.5px;color:var(--ink-muted);margin-top:20px;line-height:1.55;}
+
+  /* ---------- Secondary (optional) lead capture ---------- */
+  .secondary-capture{
+    margin-top:22px;padding:16px 18px;border-radius:9px;background:var(--surface-card-2);border:1px solid var(--border);
+  }
+  .sc-head h3{font-family:var(--font-display);font-weight:600;font-size:15px;margin:0 0 3px;}
+  .sc-head p{font-size:12.5px;color:var(--ink-muted);margin:0 0 12px;}
+  .sc-fields{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:start;}
+  .sc-fields .field{margin:0;}
+  .sc-fields .btn{width:auto;padding:10px 16px;white-space:nowrap;}
+  @media (max-width:720px){ .sc-fields{grid-template-columns:1fr;} .sc-fields .btn{width:100%;} }
+  .sc-confirm{font-size:13px;color:var(--good);font-weight:600;margin:10px 0 0;display:none;}
+  .sc-confirm.show{display:block;}
+  #secondary-form.hide{display:none;}
+
+  .err{color:var(--critical);font-size:11.5px;margin-top:8px;display:none;}
+  .err.show{display:block;}
+
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;}
+
+  @media (prefers-reduced-motion:no-preference){
+    .result-body.show{animation:fadein .35s ease;}
+    @keyframes fadein{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="brandmark">
+      <div class="mark">V</div>
+      <div class="name">Vanguard Captive Management</div>
+    </div>
+    <span class="betapill">Calculator</span>
+  </div>
+  <h1 class="title">The <span class="hl">NO CAPTIVE</span> Cost Calculator</h1>
+  <p class="dek">See what your current financing strategy is likely costing you every year in retained finance income, lost equipment sales, and customer retention — versus what a captive or hybrid captive program would capture.</p>
+
+  <div class="stage">
+    <!-- INPUT PANEL -->
+    <form class="card panel-input" id="calc-form" novalidate>
+      <div class="field">
+        <label class="flabel" for="vertical">Your equipment category</label>
+        <select class="finput" id="vertical" name="vertical"></select>
+      </div>
+
+      <div class="field">
+        <label class="flabel" for="revenue">Annual equipment sales revenue</label>
+        <div class="dollar-input">
+          <span class="prefix">$</span>
+          <input class="finput" type="text" inputmode="numeric" id="revenue" name="revenue" placeholder="60,000,000" autocomplete="off" />
+        </div>
+        <div class="fhint">Total annual sales across all dealers, in dollars</div>
+      </div>
+
+      <div class="field">
+        <label class="flabel">Current financing approach</label>
+        <div class="stage-options" id="stage-options" role="radiogroup" aria-label="Current financing approach"></div>
+      </div>
+
+      <details class="refine" id="refine-details">
+        <summary>Refine the assumptions (optional)</summary>
+        <div class="refine-grid">
+          <div class="field">
+            <label class="flabel" for="asp">Avg. unit price ($)</label>
+            <input class="finput" type="text" inputmode="numeric" id="asp" name="asp" />
+          </div>
+          <div class="field">
+            <label class="flabel" for="margin">Gross margin on units (%)</label>
+            <input class="finput" type="text" inputmode="numeric" id="margin" name="margin" />
+          </div>
+          <div class="field" style="grid-column:1/-1;">
+            <label class="flabel" for="maxpen">Realistic max financing penetration (%)</label>
+            <input class="finput" type="text" inputmode="numeric" id="maxpen" name="maxpen" />
+            <div class="fhint">Share of unit sales a best-in-class program could finance through your brand</div>
+          </div>
+          <div class="field" style="grid-column:1/-1;">
+            <label class="flabel" for="cycleyears">Replacement cycle (years)</label>
+            <input class="finput" type="text" inputmode="numeric" id="cycleyears" name="cycleyears" />
+            <div class="fhint">Typical years between a customer's equipment purchases — used to value the customer relationship over multiple purchase cycles, not just this year's sale</div>
+          </div>
+        </div>
+      </details>
+
+      <button type="submit" class="btn" id="calc-btn">Calculate My Opportunity</button>
+    </form>
+
+    <!-- RESULTS PANEL -->
+    <div class="card panel-result">
+      <div class="empty-state" id="empty-state">
+        <div class="glyph">$</div>
+        <h3>Your estimate will appear here</h3>
+        <p>Fill in the three fields on the left — takes about 20 seconds.</p>
+      </div>
+
+      <div class="result-body" id="result-body">
+        <span class="stage-chip" id="stage-chip"><span class="dot"></span><span id="stage-chip-text"></span></span>
+
+        <div class="hero-figure">
+          <div class="amount"><span class="accent-num" id="hero-amount">$0</span></div>
+          <div class="label">Estimated annual value left on the table vs. a full captive program</div>
+        </div>
+
+        <hr class="divider" />
+
+        <h2 class="sec-title">Where it's going</h2>
+        <div class="breakdown-bar" id="breakdown-bar"></div>
+        <div class="breakdown-legend" id="breakdown-legend"></div>
+
+        <hr class="divider" />
+
+        <h2 class="sec-title">Where you sit today</h2>
+        <div class="spectrum">
+          <div class="spectrum-track" id="spectrum-track">
+            <div class="marker" id="marker-current"><div class="pinlabel" id="marker-current-label"></div><div class="pin"></div></div>
+            <div class="marker ghost" id="marker-target"><div class="pinlabel">Captive / Hybrid</div><div class="pin"></div></div>
+          </div>
+          <div class="spectrum-labels">
+            <span>No Program</span><span>Dealer-Arranged</span><span>Third-Party Lender</span><span>Captive / Hybrid</span>
+          </div>
+        </div>
+
+        <div class="recover-callout" id="recover-callout">
+          <div class="rc-amt" id="recover-amt">$0</div>
+          <div class="rc-text" id="recover-text"></div>
+        </div>
+
+        <div class="cta-row">
+          <!-- TODO(dev): point to VCM's live scheduling/contact destination before production embed -->
+          <a class="btn" href="#" id="cta-primary">Talk to VCM About Your Captive Options</a>
+          <button type="button" class="btn ghost" id="cta-restart">Start Over</button>
+        </div>
+
+        <div class="secondary-capture" id="secondary-capture">
+          <div class="sc-head">
+            <h3>Want a copy of this estimate?</h3>
+            <p>Optional — we'll email you this breakdown, or have someone from VCM follow up.</p>
+          </div>
+          <form id="secondary-form" novalidate>
+            <div class="sc-fields">
+              <div class="field">
+                <label class="flabel sr-only" for="sc-name">Full name</label>
+                <input class="finput" type="text" id="sc-name" placeholder="Full name" autocomplete="name" />
+              </div>
+              <div class="field">
+                <label class="flabel sr-only" for="sc-email">Work email</label>
+                <input class="finput" type="email" id="sc-email" placeholder="Work email" autocomplete="email" />
+              </div>
+              <div class="field">
+                <label class="flabel sr-only" for="sc-company">Company</label>
+                <input class="finput" type="text" id="sc-company" placeholder="Company (optional)" autocomplete="organization" />
+              </div>
+              <button type="submit" class="btn" id="sc-submit">Email Me This Estimate</button>
+            </div>
+            <div class="err" id="sc-err">Enter your name and a valid work email.</div>
+          </form>
+          <p class="sc-confirm" id="sc-confirm" role="status"></p>
+        </div>
+
+        <details class="methodology">
+          <summary>How we calculated this</summary>
+          <div class="method-body">
+            <p>The estimate is built from four value levers that a captive or hybrid captive program captures and other approaches typically don't. Each is measured as an annual dollar gap versus a full captive baseline:</p>
+            <dl>
+              <dt>Finance income</dt><dd>Interest-rate spread on financed sales that flows to a bank or goes uncaptured today, instead of being retained through your own program.</dd>
+              <dt>Lost sales</dt><dd>Deals that fall through — or go to a competing brand — because financing wasn't fast, flexible, or available enough at the point of sale.</dd>
+              <dt>Retention</dt><dd>Repeat purchases lost at trade-in or replacement time because no one owns the customer's payment relationship — valued across a customer's next several replacement cycles, not just this year's sale.</dd>
+              <dt>Brand impact</dt><dd>Customers who do get financed, but through an experience — slow, opaque, or misaligned with their interests — bad enough to cost you their next purchase. Highest where a single outside lender runs point-of-sale financing across your whole dealer network.</dd>
+            </dl>
+            <p>The retention and brand-impact levers value a lost customer across their next few replacement cycles (not just one missed sale), using your category's typical replacement cycle and an 8% annual discount rate applied over 3 future cycles — the further out a repeat purchase sits, the less it's worth today.</p>
+            <p>Inputs used for this estimate:</p>
+            <ul id="method-inputs"></ul>
+            <p class="footnote" style="margin-top:10px;">These figures are directional planning estimates built from general equipment-finance industry benchmarks, calibrated to your category and inputs above — not a quote, appraisal, or guarantee. Actual results depend on your dealer network, credit mix, and program design.</p>
+          </div>
+        </details>
+
+        <p class="footnote">Vanguard Captive Management is not a bank, lender, or licensed financial institution, and this tool does not constitute a loan offer or financial advice.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var VERTICALS = {
+    trailers:        { label:"Trailers",                        asp:45000,  margin:0.18, maxpen:0.68, cycleYears:7 },
+    construction:     { label:"Construction Equipment",          asp:150000, margin:0.15, maxpen:0.65, cycleYears:5 },
+    materialHandling: { label:"Material Handling",               asp:35000,  margin:0.20, maxpen:0.62, cycleYears:6 },
+    agriculture:      { label:"Agriculture",                     asp:120000, margin:0.16, maxpen:0.66, cycleYears:6 },
+    transportation:   { label:"Transportation",                  asp:95000,  margin:0.14, maxpen:0.70, cycleYears:4 },
+    manufacturing:    { label:"Manufacturing / Other Equipment", asp:80000,  margin:0.17, maxpen:0.60, cycleYears:6 }
+  };
+  var VERTICAL_ORDER = ["trailers","construction","materialHandling","agriculture","transportation","manufacturing"];
+
+  var STAGES = {
+    none: {
+      label:"No formal financing program", desc:"Dealers and customers arrange financing on their own",
+      proximity:4, penetrationFactor:0.35, spreadCaptureFactor:0.00, falloutRate:0.08, repeatUplift:0.00, brandDamageRate:0.000, status:"critical"
+    },
+    dealer: {
+      label:"Informal, dealer-arranged financing", desc:"Dealers have their own bank or credit union relationships, no OEM program",
+      proximity:28, penetrationFactor:0.55, spreadCaptureFactor:0.05, falloutRate:0.04, repeatUplift:0.01, brandDamageRate:0.02, status:"critical"
+    },
+    thirdparty: {
+      label:"Preferred third-party lender", desc:"A bank or finance company runs point-of-sale financing for your dealers",
+      proximity:58, penetrationFactor:0.80, spreadCaptureFactor:0.15, falloutRate:0.015, repeatUplift:0.02, brandDamageRate:0.05, status:"warning"
+    },
+    virtualcaptive: {
+      label:"Captive or Hybrid Captive", desc:"You already run a full captive or hybrid (virtual) captive finance program",
+      proximity:95, penetrationFactor:0.97, spreadCaptureFactor:0.95, falloutRate:0.003, repeatUplift:0.07, brandDamageRate:0.003, status:"good"
+    }
+  };
+  var STAGE_ORDER = ["none","dealer","thirdparty","virtualcaptive"];
+
+  var FULL_SPREAD_RATE = 0.04;    // annual net finance margin captured on funded volume, full captive baseline
+  var FULL_REPEAT_UPLIFT = 0.08;  // steady-state repeat-purchase uplift a full captive relationship drives
+  var CLV_HORIZON_CYCLES = 3;     // number of future replacement cycles a retained/lost customer relationship is valued over
+  var CLV_DISCOUNT_RATE = 0.08;   // annual discount rate applied to future replacement-cycle purchases
+
+  function clvMultiplier(cycleYears){
+    var mult = 0;
+    for (var k = 1; k <= CLV_HORIZON_CYCLES; k++){
+      mult += 1 / Math.pow(1 + CLV_DISCOUNT_RATE, k * cycleYears);
+    }
+    return mult;
+  }
+
+  var fmtUSD0 = new Intl.NumberFormat("en-US", { style:"currency", currency:"USD", maximumFractionDigits:0 });
+  var fmtUSDcompact = function(n){
+    if (Math.abs(n) >= 1000000) return "$" + (n/1000000).toFixed(n >= 10000000 ? 0 : 1) + "M";
+    if (Math.abs(n) >= 1000) return "$" + Math.round(n/1000) + "K";
+    return fmtUSD0.format(n);
+  };
+  var fmtNum = new Intl.NumberFormat("en-US");
+
+  function parseNum(str){
+    if (typeof str !== "string") return NaN;
+    var cleaned = str.replace(/[^0-9.]/g,"");
+    return cleaned === "" ? NaN : parseFloat(cleaned);
+  }
+  function formatThousands(n){
+    if (isNaN(n)) return "";
+    return fmtNum.format(Math.round(n));
+  }
+
+  // ---------- Build vertical select ----------
+  var verticalSel = document.getElementById("vertical");
+  VERTICAL_ORDER.forEach(function(key){
+    var opt = document.createElement("option");
+    opt.value = key;
+    opt.textContent = VERTICALS[key].label;
+    verticalSel.appendChild(opt);
+  });
+
+  // ---------- Build stage cards ----------
+  var stageOptionsEl = document.getElementById("stage-options");
+  STAGE_ORDER.forEach(function(key, i){
+    var s = STAGES[key];
+    var wrap = document.createElement("label");
+    wrap.className = "stage-card" + (i === 0 ? " selected" : "");
+    wrap.setAttribute("data-stage", key);
+    wrap.innerHTML =
+      '<input type="radio" name="stage" value="' + key + '"' + (i === 0 ? " checked" : "") + ' />' +
+      '<div class="stitle"><span class="dot"></span>' + s.label + '</div>' +
+      '<div class="sdesc">' + s.desc + '</div>';
+    stageOptionsEl.appendChild(wrap);
+  });
+
+  function selectedStage(){
+    var checked = stageOptionsEl.querySelector('input[name="stage"]:checked');
+    return checked ? checked.value : STAGE_ORDER[0];
+  }
+
+  stageOptionsEl.addEventListener("click", function(e){
+    var card = e.target.closest(".stage-card");
+    if (!card) return;
+    Array.prototype.forEach.call(stageOptionsEl.querySelectorAll(".stage-card"), function(c){ c.classList.remove("selected"); });
+    card.classList.add("selected");
+  });
+
+  // ---------- Wire vertical defaults into refine panel ----------
+  var revenueInput = document.getElementById("revenue");
+  var aspInput = document.getElementById("asp");
+  var marginInput = document.getElementById("margin");
+  var maxpenInput = document.getElementById("maxpen");
+  var cycleYearsInput = document.getElementById("cycleyears");
+  var refineTouched = { asp:false, margin:false, maxpen:false, cycleYears:false };
+
+  function applyVerticalDefaults(){
+    var v = VERTICALS[verticalSel.value];
+    if (!refineTouched.asp) aspInput.value = formatThousands(v.asp);
+    if (!refineTouched.margin) marginInput.value = Math.round(v.margin * 100);
+    if (!refineTouched.maxpen) maxpenInput.value = Math.round(v.maxpen * 100);
+    if (!refineTouched.cycleYears) cycleYearsInput.value = v.cycleYears;
+  }
+  verticalSel.addEventListener("change", applyVerticalDefaults);
+  aspInput.addEventListener("input", function(){ refineTouched.asp = true; });
+  marginInput.addEventListener("input", function(){ refineTouched.margin = true; });
+  maxpenInput.addEventListener("input", function(){ refineTouched.maxpen = true; });
+  cycleYearsInput.addEventListener("input", function(){ refineTouched.cycleYears = true; });
+
+  revenueInput.addEventListener("blur", function(){
+    var n = parseNum(revenueInput.value);
+    if (!isNaN(n)) revenueInput.value = formatThousands(n);
+  });
+
+  verticalSel.value = VERTICAL_ORDER[0];
+  applyVerticalDefaults();
+
+  // ---------- Core model ----------
+  function compute(vals){
+    var annualUnits = vals.revenue / vals.asp;
+    var s = STAGES[vals.stageKey];
+    var clvMult = clvMultiplier(vals.cycleYears);
+
+    var fullFundedVolume = annualUnits * vals.asp * vals.maxpen;
+    var currentFundedVolume = fullFundedVolume * s.penetrationFactor;
+
+    var lever1Full = fullFundedVolume * FULL_SPREAD_RATE;
+    var lever1Current = currentFundedVolume * FULL_SPREAD_RATE * s.spreadCaptureFactor;
+    var lever1Gap = Math.max(0, lever1Full - lever1Current);
+
+    var lever2Gap = annualUnits * s.falloutRate * vals.asp * vals.margin;
+
+    // Retention: a lost customer is valued across their next few replacement
+    // cycles (via clvMult), not just this year's sale.
+    var lever3Gap = annualUnits * Math.max(0, FULL_REPEAT_UPLIFT - s.repeatUplift) * vals.asp * vals.margin * clvMult;
+
+    // Brand impact: share of THIS YEAR's financed customers whose experience is
+    // bad enough to cost their next purchase — same multi-cycle relationship
+    // value as retention, applied only to units actually financed today.
+    var lever4Gap = currentFundedVolume * s.brandDamageRate * vals.margin * clvMult;
+
+    var total = lever1Gap + lever2Gap + lever3Gap + lever4Gap;
+    return { annualUnits:annualUnits, lever1Gap:lever1Gap, lever2Gap:lever2Gap, lever3Gap:lever3Gap, lever4Gap:lever4Gap, total:total, clvMult:clvMult };
+  }
+
+  function computeForStage(vals, stageKey){
+    return compute({ revenue:vals.revenue, asp:vals.asp, margin:vals.margin, maxpen:vals.maxpen, cycleYears:vals.cycleYears, stageKey:stageKey });
+  }
+
+  // ---------- Render results ----------
+  var lastVals = null;
+
+  function render(vals){
+    var s = STAGES[vals.stageKey];
+    var res = compute(vals);
+    var vcResult = computeForStage(vals, "virtualcaptive");
+    var recoverable = Math.max(0, res.total - vcResult.total);
+
+    document.getElementById("stage-chip-text").textContent = s.label;
+    document.getElementById("stage-chip").querySelector(".dot").style.background = "var(--" + s.status + ")";
+
+    document.getElementById("hero-amount").textContent = fmtUSD0.format(Math.round(res.total));
+
+    var segs = [
+      { key:"spread", name:"Finance income", val:res.lever1Gap, color:"var(--lever-spread)" },
+      { key:"sales", name:"Lost sales", val:res.lever2Gap, color:"var(--lever-sales)" },
+      { key:"retention", name:"Retention", val:res.lever3Gap, color:"var(--lever-retention)" },
+      { key:"brand", name:"Brand impact", val:res.lever4Gap, color:"var(--lever-brand)" }
+    ];
+    var total = res.total || 1;
+
+    var bar = document.getElementById("breakdown-bar");
+    bar.innerHTML = "";
+    segs.forEach(function(seg, i){
+      var pct = seg.val / total;
+      var el = document.createElement("div");
+      el.className = "seg";
+      el.style.width = (pct * 100) + "%";
+      el.style.background = seg.color;
+      if (i < segs.length - 1) el.style.borderRight = "2px solid var(--surface-card)";
+      el.title = seg.name + ": " + fmtUSD0.format(Math.round(seg.val));
+      bar.appendChild(el);
+    });
+
+    var legend = document.getElementById("breakdown-legend");
+    legend.innerHTML = "";
+    segs.forEach(function(seg){
+      var pct = total > 0 ? Math.round((seg.val/total)*100) : 0;
+      var item = document.createElement("div");
+      item.className = "leg-item";
+      item.innerHTML =
+        '<span class="leg-swatch" style="background:' + seg.color + '"></span>' +
+        '<div><div class="lname">' + seg.name + '</div>' +
+        '<div class="lval">' + fmtUSDcompact(seg.val) + '</div>' +
+        '<div class="lsub">' + pct + '% of the gap</div></div>';
+      legend.appendChild(item);
+    });
+
+    var track = document.getElementById("spectrum-track");
+    var curMarker = document.getElementById("marker-current");
+    var curLabel = document.getElementById("marker-current-label");
+    var tgtMarker = document.getElementById("marker-target");
+    curMarker.style.left = s.proximity + "%";
+    curLabel.textContent = s.label;
+    tgtMarker.style.left = STAGES.virtualcaptive.proximity + "%";
+    tgtMarker.style.display = (vals.stageKey === "virtualcaptive") ? "none" : "block";
+
+    var recoverText = document.getElementById("recover-text");
+    var recoverAmt = document.getElementById("recover-amt");
+    if (vals.stageKey === "virtualcaptive") {
+      recoverAmt.textContent = fmtUSD0.format(Math.round(res.total));
+      recoverText.textContent = "Even with a captive or hybrid captive program in place, this is the estimated residual gap versus a full traditional captive — consistent with capturing roughly 95% of full-captive economics.";
+    } else {
+      recoverAmt.textContent = fmtUSD0.format(Math.round(recoverable));
+      recoverText.textContent = "Estimated amount a captive or hybrid captive program would recover annually, based on your inputs above.";
+    }
+
+    var methodList = document.getElementById("method-inputs");
+    methodList.innerHTML =
+      "<li>Category: " + VERTICALS[vals.verticalKey].label + "</li>" +
+      "<li>Annual equipment sales revenue: " + fmtUSD0.format(vals.revenue) + "</li>" +
+      "<li>Estimated annual unit volume: " + fmtNum.format(Math.round(res.annualUnits)) + " units (revenue ÷ avg. unit price)</li>" +
+      "<li>Avg. unit price: " + fmtUSD0.format(vals.asp) + "</li>" +
+      "<li>Gross margin on units: " + Math.round(vals.margin*100) + "%</li>" +
+      "<li>Realistic max financing penetration: " + Math.round(vals.maxpen*100) + "%</li>" +
+      "<li>Replacement cycle: " + vals.cycleYears + " years (3 future cycles valued at an 8% annual discount rate)</li>" +
+      "<li>Current financing approach: " + s.label + "</li>";
+
+    lastVals = vals;
+    document.getElementById("empty-state").style.display = "none";
+    document.getElementById("result-body").classList.add("show");
+  }
+
+  // ---------- Form validation ----------
+  var calcForm = document.getElementById("calc-form");
+
+  function readFormVals(){
+    var revenue = parseNum(revenueInput.value);
+    var asp = parseNum(aspInput.value);
+    var margin = parseNum(marginInput.value) / 100;
+    var maxpen = parseNum(maxpenInput.value) / 100;
+    var cycleYears = parseNum(cycleYearsInput.value);
+    var stageKey = selectedStage();
+    var verticalKey = verticalSel.value;
+    return { revenue:revenue, asp:asp, margin:margin, maxpen:maxpen, cycleYears:cycleYears, stageKey:stageKey, verticalKey:verticalKey };
+  }
+
+  calcForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    var vals = readFormVals();
+    if (!vals.revenue || vals.revenue <= 0) {
+      revenueInput.focus();
+      revenueInput.style.borderColor = "var(--critical)";
+      return;
+    }
+    revenueInput.style.borderColor = "";
+    render(vals);
+    document.getElementById("result-body").scrollIntoView({ behavior:"smooth", block:"start" });
+  });
+
+  // ---------- Secondary (optional) lead capture — shown after results, never blocks them ----------
+  var secondaryForm = document.getElementById("secondary-form");
+  secondaryForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    var name = document.getElementById("sc-name").value.trim();
+    var email = document.getElementById("sc-email").value.trim();
+    var company = document.getElementById("sc-company").value.trim();
+    var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    document.getElementById("sc-err").classList.toggle("show", !name || !emailOk);
+    if (!name || !emailOk) return;
+
+    // TODO(dev): before production embed, replace this with a real submission
+    // to VCM's CRM/marketing form endpoint (e.g. HubSpot Forms API or a webhook),
+    // passing { name, email, company, ...lastVals }. No network call is made
+    // here so the tool works standalone with no backend dependency.
+
+    secondaryForm.classList.add("hide");
+    var confirmEl = document.getElementById("sc-confirm");
+    confirmEl.textContent = "Thanks, " + name.split(" ")[0] + " — we'll be in touch.";
+    confirmEl.classList.add("show");
+  });
+
+  document.getElementById("cta-restart").addEventListener("click", function(){
+    document.getElementById("result-body").classList.remove("show");
+    document.getElementById("empty-state").style.display = "flex";
+    secondaryForm.classList.remove("hide");
+    secondaryForm.reset();
+    document.getElementById("sc-err").classList.remove("show");
+    document.getElementById("sc-confirm").classList.remove("show");
+    window.scrollTo({ top:0, behavior:"smooth" });
+  });
+
+})();
+</script>
+</body>
+</html>
