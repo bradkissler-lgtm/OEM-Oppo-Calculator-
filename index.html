@@ -379,15 +379,14 @@
         </div>
 
         <div class="cta-row">
-          <!-- TODO(dev): point to VCM's live scheduling/contact destination before production embed -->
-          <a class="btn" href="#" id="cta-primary">Talk to VCM About Your Captive Options</a>
+          <a class="btn" href="mailto:contact@vancap.com?subject=Captive%20Financing%20Program%20Inquiry" id="cta-primary">Talk to VCM About Your Captive Options</a>
           <button type="button" class="btn ghost" id="cta-restart">Start Over</button>
         </div>
 
         <div class="secondary-capture" id="secondary-capture">
           <div class="sc-head">
-            <h3>Want a copy of this estimate?</h3>
-            <p>Optional — we'll email you this breakdown, or have someone from VCM follow up.</p>
+            <h3>Want VCM to follow up on this?</h3>
+            <p>Enter your info and we'll open an email to our team with your details and this estimate pre-filled — just hit send.</p>
           </div>
           <form id="secondary-form" novalidate>
             <div class="sc-fields">
@@ -403,7 +402,7 @@
                 <label class="flabel sr-only" for="sc-company">Company</label>
                 <input class="finput" type="text" id="sc-company" placeholder="Company (optional)" autocomplete="organization" />
               </div>
-              <button type="submit" class="btn" id="sc-submit">Email Me This Estimate</button>
+              <button type="submit" class="btn" id="sc-submit">Email This to VCM</button>
             </div>
             <div class="err" id="sc-err">Enter your name and a valid work email.</div>
           </form>
@@ -596,6 +595,7 @@
 
   // ---------- Render results ----------
   var lastVals = null;
+  var lastRes = null;
 
   function render(vals){
     var s = STAGES[vals.stageKey];
@@ -674,6 +674,7 @@
       "<li>Current financing approach: " + s.label + "</li>";
 
     lastVals = vals;
+    lastRes = res;
     document.getElementById("empty-state").style.display = "none";
     document.getElementById("result-body").classList.add("show");
   }
@@ -717,14 +718,25 @@
     document.getElementById("sc-err").classList.toggle("show", !name || !emailOk);
     if (!name || !emailOk) return;
 
-    // TODO(dev): before production embed, replace this with a real submission
-    // to VCM's CRM/marketing form endpoint (e.g. HubSpot Forms API or a webhook),
-    // passing { name, email, company, ...lastVals }. No network call is made
-    // here so the tool works standalone with no backend dependency.
+    var subject = "My NO CAPTIVE Cost Calculator Estimate";
+    var bodyLines = [
+      "Name: " + name,
+      "Email: " + email,
+      "Company: " + (company || "(not provided)"),
+      "",
+      "Category: " + (lastVals ? VERTICALS[lastVals.verticalKey].label : ""),
+      "Annual equipment sales revenue: " + (lastVals ? fmtUSD0.format(lastVals.revenue) : ""),
+      "Current financing approach: " + (lastVals ? STAGES[lastVals.stageKey].label : ""),
+      "Estimated annual opportunity: " + (lastRes ? fmtUSD0.format(Math.round(lastRes.total)) : ""),
+      "",
+      "(Sent from The NO CAPTIVE Cost Calculator)"
+    ];
+    var mailtoUrl = "mailto:contact@vancap.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(bodyLines.join("\n"));
+    window.location.href = mailtoUrl;
 
     secondaryForm.classList.add("hide");
     var confirmEl = document.getElementById("sc-confirm");
-    confirmEl.textContent = "Thanks, " + name.split(" ")[0] + " — we'll be in touch.";
+    confirmEl.textContent = "Opening your email to VCM, addressed to contact@vancap.com — just hit send to finish.";
     confirmEl.classList.add("show");
   });
 
