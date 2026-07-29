@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>The NO CAPTIVE Cost Calculator | Vanguard Captive Management</title>
+<title>OEM - Financing Gap Cost Calculator | Vanguard Captive Management</title>
 <style>
   :root{
     --surface: #eef1f4;
@@ -214,6 +214,7 @@
   .leg-swatch{width:11px;height:11px;border-radius:3px;margin-top:3px;flex:none;}
   .leg-item .lname{font-size:12.5px;font-weight:600;color:var(--ink-primary);}
   .leg-item .lval{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;font-family:var(--font-display);}
+  .leg-item .lmonthly{font-size:10.5px;color:var(--ink-muted);font-variant-numeric:tabular-nums;margin-top:1px;}
   .leg-item .lsub{font-size:11.5px;color:var(--ink-muted);}
 
   /* spectrum */
@@ -286,7 +287,7 @@
     </div>
     <span class="betapill">Calculator</span>
   </div>
-  <h1 class="title">The <span class="hl">NO CAPTIVE</span> Cost Calculator</h1>
+  <h1 class="title">OEM - <span class="hl">Financing Gap</span> Cost Calculator</h1>
   <p class="dek">See what your current financing strategy is likely costing you every year in retained finance income, lost equipment sales, and customer retention — versus what a captive or hybrid captive program would capture.</p>
 
   <div class="stage">
@@ -460,7 +461,7 @@
       proximity:58, penetrationFactor:0.80, spreadCaptureFactor:0.00, falloutRate:0.015, repeatUplift:0.02, brandDamageRate:0.05, status:"warning"
     },
     virtualcaptive: {
-      label:"Captive Financing Program", desc:"You already run a full captive or hybrid (virtual) captive finance program",
+      label:"Estimated cost due to portfolio losses mostly avoided with Virtual Captive™ model", desc:"You already run a full captive or hybrid (virtual) captive finance program",
       proximity:95, penetrationFactor:0.97, spreadCaptureFactor:0.95, falloutRate:0.003, repeatUplift:0.07, brandDamageRate:0.003, status:"good"
     }
   };
@@ -639,6 +640,7 @@
         '<span class="leg-swatch" style="background:' + seg.color + '"></span>' +
         '<div><div class="lname">' + seg.name + '</div>' +
         '<div class="lval">' + fmtUSDcompact(seg.val) + '</div>' +
+        '<div class="lmonthly">≈ ' + fmtUSDcompact(seg.val/12) + '/mo</div>' +
         '<div class="lsub">' + pct + '% of the gap</div></div>';
       legend.appendChild(item);
     });
@@ -718,7 +720,7 @@
     document.getElementById("sc-err").classList.toggle("show", !name || !emailOk);
     if (!name || !emailOk) return;
 
-    var subject = "My NO CAPTIVE Cost Calculator Estimate";
+    var subject = "My OEM - Financing Gap Cost Calculator Estimate";
     var bodyLines = [
       "Name: " + name,
       "Email: " + email,
@@ -729,7 +731,7 @@
       "Current financing approach: " + (lastVals ? STAGES[lastVals.stageKey].label : ""),
       "Estimated annual opportunity: " + (lastRes ? fmtUSD0.format(Math.round(lastRes.total)) : ""),
       "",
-      "(Sent from The NO CAPTIVE Cost Calculator)"
+      "(Sent from the OEM - Financing Gap Cost Calculator)"
     ];
     var mailtoUrl = "mailto:contact@vancap.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(bodyLines.join("\n"));
     window.location.href = mailtoUrl;
