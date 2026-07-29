@@ -22,7 +22,6 @@
     --accent-soft: #dcf0f8;
     --lever-spread: #2b5ea8;
     --lever-sales: #c97a2e;
-    --lever-retention: #0e93c4;
     --lever-brand: #a8467a;
     --good: #1f8f5f;
     --warning: #b3860c;
@@ -50,7 +49,6 @@
       --accent-soft: #123244;
       --lever-spread: #5988cc;
       --lever-sales: #c4813f;
-      --lever-retention: #1d8fbd;
       --lever-brand: #c06a9a;
       --good: #3fbf87;
       --warning: #d9b84a;
@@ -64,7 +62,7 @@
     --border: #2a333c; --border-strong: #384049;
     --brand-navy: #0c3b78; --brand-sky: #19b2e3;
     --accent: #35b8e8; --accent-ink: #052029; --accent-soft: #123244;
-    --lever-spread: #5988cc; --lever-sales: #c4813f; --lever-retention: #1d8fbd; --lever-brand: #c06a9a;
+    --lever-spread: #5988cc; --lever-sales: #c4813f; --lever-brand: #c06a9a;
     --good: #3fbf87; --warning: #d9b84a; --critical: #e0685c;
     --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 8px 24px -12px rgba(0,0,0,0.6);
   }
@@ -74,7 +72,7 @@
     --border: #d7dee4; --border-strong: #c1cbd3;
     --brand-navy: #0c3b78; --brand-sky: #19b2e3;
     --accent: #0b7ea6; --accent-ink: #ffffff; --accent-soft: #dcf0f8;
-    --lever-spread: #2b5ea8; --lever-sales: #c97a2e; --lever-retention: #0e93c4; --lever-brand: #a8467a;
+    --lever-spread: #2b5ea8; --lever-sales: #c97a2e; --lever-brand: #a8467a;
     --good: #1f8f5f; --warning: #b3860c; --critical: #bf3b2b;
     --shadow: 0 1px 2px rgba(16,24,31,0.06), 0 8px 24px -12px rgba(16,24,31,0.18);
   }
@@ -288,7 +286,7 @@
     <span class="betapill">Calculator</span>
   </div>
   <h1 class="title">OEM - <span class="hl">Financing Gap</span> Cost Calculator</h1>
-  <p class="dek">See what your current financing strategy is likely costing you every year in retained finance income, lost equipment sales, and customer retention — versus what a Virtual Captive™ program would capture.</p>
+  <p class="dek">See what your current financing strategy is likely costing you every year in retained finance income, lost equipment sales, and toxic-financing brand damage — versus what a Virtual Captive™ program would capture.</p>
 
   <div class="stage">
     <!-- INPUT PANEL -->
@@ -413,14 +411,13 @@
         <details class="methodology">
           <summary>How we calculated this</summary>
           <div class="method-body">
-            <p>The estimate is built from four value levers that a Virtual Captive™ program captures and other approaches typically don't. Each is measured as an annual dollar gap versus a full captive baseline:</p>
+            <p>The estimate is built from three value levers that a Virtual Captive™ program captures and other approaches typically don't. Each is measured as an annual dollar gap versus a full captive baseline:</p>
             <dl>
               <dt>Finance income</dt><dd>Interest-rate spread on financed sales that flows to a bank or goes uncaptured today, instead of being retained through your own program.</dd>
               <dt>Lost sales</dt><dd>Deals that fall through — or go to a competing brand — because financing wasn't fast, flexible, or available enough at the point of sale.</dd>
-              <dt>Retention</dt><dd>Repeat purchases lost at trade-in or replacement time because no one owns the customer's payment relationship — valued across a customer's next several replacement cycles, not just this year's sale.</dd>
-              <dt>Brand impact</dt><dd>Customers who do get financed, but through an experience — slow, opaque, or misaligned with their interests — bad enough to cost you their next purchase. Highest where a single outside lender runs point-of-sale financing across your whole dealer network.</dd>
+              <dt>Brand impact</dt><dd>Customers who do get financed, but through a toxic experience — slow, opaque, or misaligned with their interests — bad enough to cost you their next purchase, including the repeat business you'd otherwise have kept. Highest where a single outside lender runs point-of-sale financing across your whole dealer network.</dd>
             </dl>
-            <p>The retention and brand-impact levers value a lost customer across their next few replacement cycles (not just one missed sale), using your category's typical replacement cycle and an 8% annual discount rate applied over 3 future cycles — the further out a repeat purchase sits, the less it's worth today.</p>
+            <p>The brand-impact lever values a lost customer across their next few replacement cycles (not just one missed sale), using your category's typical replacement cycle and an 8% annual discount rate applied over 3 future cycles — the further out a repeat purchase sits, the less it's worth today.</p>
             <p>Inputs used for this estimate:</p>
             <ul id="method-inputs"></ul>
             <p class="footnote" style="margin-top:10px;">These figures are directional planning estimates built from general equipment-finance industry benchmarks, calibrated to your category and inputs above — not a quote, appraisal, or guarantee. Actual results depend on your dealer network, credit mix, and program design.</p>
@@ -450,26 +447,25 @@
   var STAGES = {
     none: {
       label:"No OEM Provided Financing Strategy", desc:"Dealers and customers arrange financing on their own",
-      proximity:4, penetrationFactor:0.43, spreadCaptureFactor:0.00, falloutRate:0.15, repeatUplift:0.05, brandDamageRate:0.35, status:"critical"
+      proximity:4, penetrationFactor:0.43, spreadCaptureFactor:0.00, falloutRate:0.15, brandDamageRate:0.35, status:"critical"
     },
     dealer: {
       label:"Informal or Dealer-Arranged Financing", desc:"Dealers have their own bank or credit union relationships, no OEM program",
-      proximity:28, penetrationFactor:0.50, spreadCaptureFactor:0.00, falloutRate:0.10, repeatUplift:0.15, brandDamageRate:0.25, status:"critical"
+      proximity:28, penetrationFactor:0.50, spreadCaptureFactor:0.00, falloutRate:0.10, brandDamageRate:0.25, status:"critical"
     },
     thirdparty: {
       label:"OEM Preferred Lender or White Labeled Financing Program", desc:"A bank or finance company runs point-of-sale financing for your dealers",
-      proximity:58, penetrationFactor:0.60, spreadCaptureFactor:0.00, falloutRate:0.05, repeatUplift:0.25, brandDamageRate:0.15, status:"warning"
+      proximity:58, penetrationFactor:0.60, spreadCaptureFactor:0.00, falloutRate:0.05, brandDamageRate:0.15, status:"warning"
     },
     virtualcaptive: {
       label:"Estimated cost due to portfolio losses mostly avoided with Virtual Captive™ model", desc:"You already run a full captive or Virtual Captive™ finance program",
-      proximity:95, penetrationFactor:0.85, spreadCaptureFactor:0.97, falloutRate:0.01, repeatUplift:0.45, brandDamageRate:0.05, status:"good"
+      proximity:95, penetrationFactor:0.85, spreadCaptureFactor:0.97, falloutRate:0.01, brandDamageRate:0.05, status:"good"
     }
   };
   var STAGE_ORDER = ["none","dealer","thirdparty","virtualcaptive"];
 
   var FULL_SPREAD_RATE = 0.04;    // annual net finance margin captured on funded volume, full captive baseline
-  var FULL_REPEAT_UPLIFT = 0.50;  // steady-state repeat-purchase uplift a full captive relationship drives
-  var CLV_HORIZON_CYCLES = 3;     // number of future replacement cycles a retained/lost customer relationship is valued over
+  var CLV_HORIZON_CYCLES = 3;     // number of future replacement cycles a lost customer relationship is valued over
   var CLV_DISCOUNT_RATE = 0.08;   // annual discount rate applied to future replacement-cycle purchases
 
   function clvMultiplier(cycleYears){
@@ -577,17 +573,14 @@
 
     var lever2Gap = annualUnits * s.falloutRate * vals.asp * vals.margin;
 
-    // Retention: a lost customer is valued across their next few replacement
-    // cycles (via clvMult), not just this year's sale.
-    var lever3Gap = annualUnits * Math.max(0, FULL_REPEAT_UPLIFT - s.repeatUplift) * vals.asp * vals.margin * clvMult;
-
     // Brand impact: share of THIS YEAR's financed customers whose experience is
-    // bad enough to cost their next purchase — same multi-cycle relationship
-    // value as retention, applied only to units actually financed today.
+    // bad enough — a "toxic" financing arrangement — to cost their next
+    // purchase, valued across their next few replacement cycles (via
+    // clvMult), applied only to units actually financed today.
     var lever4Gap = currentFundedVolume * s.brandDamageRate * vals.margin * clvMult;
 
-    var total = lever1Gap + lever2Gap + lever3Gap + lever4Gap;
-    return { annualUnits:annualUnits, lever1Gap:lever1Gap, lever2Gap:lever2Gap, lever3Gap:lever3Gap, lever4Gap:lever4Gap, total:total, clvMult:clvMult };
+    var total = lever1Gap + lever2Gap + lever4Gap;
+    return { annualUnits:annualUnits, lever1Gap:lever1Gap, lever2Gap:lever2Gap, lever4Gap:lever4Gap, total:total, clvMult:clvMult };
   }
 
   function computeForStage(vals, stageKey){
@@ -612,7 +605,6 @@
     var segs = [
       { key:"spread", name:"Finance income", val:res.lever1Gap, color:"var(--lever-spread)" },
       { key:"sales", name:"Lost sales", val:res.lever2Gap, color:"var(--lever-sales)" },
-      { key:"retention", name:"Retention", val:res.lever3Gap, color:"var(--lever-retention)" },
       { key:"brand", name:"Brand impact", val:res.lever4Gap, color:"var(--lever-brand)" }
     ];
     var total = res.total || 1;
