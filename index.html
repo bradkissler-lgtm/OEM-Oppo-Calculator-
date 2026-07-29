@@ -328,6 +328,11 @@
             <input class="finput" type="text" inputmode="numeric" id="margin" name="margin" />
           </div>
           <div class="field" style="grid-column:1/-1;">
+            <label class="flabel" for="futuremargin">Gross margin on future replacement-cycle sales (%)</label>
+            <input class="finput" type="text" inputmode="numeric" id="futuremargin" name="futuremargin" />
+            <div class="fhint">Used for the Brand Impact lever's future-cycle value, separate from this year's margin above</div>
+          </div>
+          <div class="field" style="grid-column:1/-1;">
             <label class="flabel" for="maxpen">Realistic max financing penetration (%)</label>
             <input class="finput" type="text" inputmode="numeric" id="maxpen" name="maxpen" />
             <div class="fhint">Share of unit sales a best-in-class program could finance through your brand</div>
@@ -442,12 +447,12 @@
   "use strict";
 
   var VERTICALS = {
-    trailers:        { label:"Trailers",                        asp:20000,  margin:0.25, maxpen:0.75, cycleYears:7 },
-    construction:     { label:"Construction Equipment",          asp:150000, margin:0.15, maxpen:0.65, cycleYears:5 },
-    materialHandling: { label:"Material Handling",               asp:35000,  margin:0.20, maxpen:0.62, cycleYears:6 },
-    agriculture:      { label:"Agriculture",                     asp:120000, margin:0.16, maxpen:0.66, cycleYears:6 },
-    transportation:   { label:"Transportation",                  asp:95000,  margin:0.14, maxpen:0.70, cycleYears:4 },
-    manufacturing:    { label:"Manufacturing / Other Equipment", asp:80000,  margin:0.17, maxpen:0.60, cycleYears:6 }
+    trailers:        { label:"Trailers",                        asp:20000,  margin:0.275, futureMargin:0.325, maxpen:0.75, cycleYears:7 },
+    construction:     { label:"Construction Equipment",          asp:150000, margin:0.15,  futureMargin:0.15,  maxpen:0.65, cycleYears:5 },
+    materialHandling: { label:"Material Handling",               asp:35000,  margin:0.20,  futureMargin:0.20,  maxpen:0.62, cycleYears:6 },
+    agriculture:      { label:"Agriculture",                     asp:120000, margin:0.16,  futureMargin:0.16,  maxpen:0.66, cycleYears:6 },
+    transportation:   { label:"Transportation",                  asp:95000,  margin:0.14,  futureMargin:0.14,  maxpen:0.70, cycleYears:4 },
+    manufacturing:    { label:"Manufacturing / Other Equipment", asp:80000,  margin:0.17,  futureMargin:0.17,  maxpen:0.60, cycleYears:6 }
   };
   var VERTICAL_ORDER = ["trailers","construction","materialHandling","agriculture","transportation","manufacturing"];
 
@@ -540,20 +545,27 @@
   var revenueInput = document.getElementById("revenue");
   var aspInput = document.getElementById("asp");
   var marginInput = document.getElementById("margin");
+  var futureMarginInput = document.getElementById("futuremargin");
   var maxpenInput = document.getElementById("maxpen");
   var cycleYearsInput = document.getElementById("cycleyears");
-  var refineTouched = { asp:false, margin:false, maxpen:false, cycleYears:false };
+  var refineTouched = { asp:false, margin:false, futureMargin:false, maxpen:false, cycleYears:false };
+
+  function formatPercent(v){
+    return Math.round(v * 1000) / 10;
+  }
 
   function applyVerticalDefaults(){
     var v = VERTICALS[verticalSel.value];
     if (!refineTouched.asp) aspInput.value = formatThousands(v.asp);
-    if (!refineTouched.margin) marginInput.value = Math.round(v.margin * 100);
-    if (!refineTouched.maxpen) maxpenInput.value = Math.round(v.maxpen * 100);
+    if (!refineTouched.margin) marginInput.value = formatPercent(v.margin);
+    if (!refineTouched.futureMargin) futureMarginInput.value = formatPercent(v.futureMargin);
+    if (!refineTouched.maxpen) maxpenInput.value = formatPercent(v.maxpen);
     if (!refineTouched.cycleYears) cycleYearsInput.value = v.cycleYears;
   }
   verticalSel.addEventListener("change", applyVerticalDefaults);
   aspInput.addEventListener("input", function(){ refineTouched.asp = true; });
   marginInput.addEventListener("input", function(){ refineTouched.margin = true; });
+  futureMarginInput.addEventListener("input", function(){ refineTouched.futureMargin = true; });
   maxpenInput.addEventListener("input", function(){ refineTouched.maxpen = true; });
   cycleYearsInput.addEventListener("input", function(){ refineTouched.cycleYears = true; });
 
@@ -584,14 +596,14 @@
     // bad enough — a "toxic" financing arrangement — to cost their next
     // purchase, valued across their next few replacement cycles (via
     // clvMult), applied only to units actually financed today.
-    var lever4Gap = currentFundedVolume * s.brandDamageRate * vals.margin * clvMult;
+    var lever4Gap = currentFundedVolume * s.brandDamageRate * vals.futureMargin * clvMult;
 
     var total = lever1Gap + lever2Gap + lever4Gap;
     return { annualUnits:annualUnits, lever1Gap:lever1Gap, lever2Gap:lever2Gap, lever4Gap:lever4Gap, total:total, clvMult:clvMult };
   }
 
   function computeForStage(vals, stageKey){
-    return compute({ revenue:vals.revenue, asp:vals.asp, margin:vals.margin, maxpen:vals.maxpen, cycleYears:vals.cycleYears, stageKey:stageKey });
+    return compute({ revenue:vals.revenue, asp:vals.asp, margin:vals.margin, futureMargin:vals.futureMargin, maxpen:vals.maxpen, cycleYears:vals.cycleYears, stageKey:stageKey });
   }
 
   // ---------- Render results ----------
@@ -672,8 +684,9 @@
       "<li>Annual equipment sales revenue: " + fmtUSD0.format(vals.revenue) + "</li>" +
       "<li>Estimated annual unit volume: " + fmtNum.format(Math.round(res.annualUnits)) + " units (revenue ÷ avg. unit price)</li>" +
       "<li>Avg. unit price: " + fmtUSD0.format(vals.asp) + "</li>" +
-      "<li>Gross margin on units: " + Math.round(vals.margin*100) + "%</li>" +
-      "<li>Realistic max financing penetration: " + Math.round(vals.maxpen*100) + "%</li>" +
+      "<li>Gross margin on units: " + formatPercent(vals.margin) + "%</li>" +
+      "<li>Gross margin on future replacement-cycle sales: " + formatPercent(vals.futureMargin) + "%</li>" +
+      "<li>Realistic max financing penetration: " + formatPercent(vals.maxpen) + "%</li>" +
       "<li>Replacement cycle: " + vals.cycleYears + " years (3 future cycles valued at an 8% annual discount rate)</li>" +
       "<li>Current financing approach: " + s.label + "</li>";
 
@@ -690,11 +703,12 @@
     var revenue = parseNum(revenueInput.value);
     var asp = parseNum(aspInput.value);
     var margin = parseNum(marginInput.value) / 100;
+    var futureMargin = parseNum(futureMarginInput.value) / 100;
     var maxpen = parseNum(maxpenInput.value) / 100;
     var cycleYears = parseNum(cycleYearsInput.value);
     var stageKey = selectedStage();
     var verticalKey = verticalSel.value;
-    return { revenue:revenue, asp:asp, margin:margin, maxpen:maxpen, cycleYears:cycleYears, stageKey:stageKey, verticalKey:verticalKey };
+    return { revenue:revenue, asp:asp, margin:margin, futureMargin:futureMargin, maxpen:maxpen, cycleYears:cycleYears, stageKey:stageKey, verticalKey:verticalKey };
   }
 
   calcForm.addEventListener("submit", function(e){
@@ -731,7 +745,7 @@
     syncStageCard(stageKey);
     var vals = {
       revenue: lastVals.revenue, asp: lastVals.asp, margin: lastVals.margin,
-      maxpen: lastVals.maxpen, cycleYears: lastVals.cycleYears,
+      futureMargin: lastVals.futureMargin, maxpen: lastVals.maxpen, cycleYears: lastVals.cycleYears,
       verticalKey: lastVals.verticalKey, stageKey: stageKey
     };
     render(vals);
