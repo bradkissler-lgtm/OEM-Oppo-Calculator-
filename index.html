@@ -450,19 +450,19 @@
   var STAGES = {
     none: {
       label:"No OEM Provided Financing Strategy", desc:"Dealers and customers arrange financing on their own",
-      proximity:4, penetrationFactor:0.43, spreadCaptureFactor:0.90, falloutRate:0.15, repeatUplift:0.05, brandDamageRate:0.35, status:"critical"
+      proximity:4, penetrationFactor:0.43, spreadCaptureFactor:0.00, falloutRate:0.15, repeatUplift:0.05, brandDamageRate:0.35, status:"critical"
     },
     dealer: {
       label:"Informal or Dealer-Arranged Financing", desc:"Dealers have their own bank or credit union relationships, no OEM program",
-      proximity:28, penetrationFactor:0.50, spreadCaptureFactor:0.90, falloutRate:0.10, repeatUplift:0.01, brandDamageRate:0.25, status:"critical"
+      proximity:28, penetrationFactor:0.50, spreadCaptureFactor:0.00, falloutRate:0.10, repeatUplift:0.01, brandDamageRate:0.25, status:"critical"
     },
     thirdparty: {
       label:"OEM Preferred Lender or White Labeled Financing Program", desc:"A bank or finance company runs point-of-sale financing for your dealers",
-      proximity:58, penetrationFactor:0.60, spreadCaptureFactor:0.90, falloutRate:0.05, repeatUplift:0.02, brandDamageRate:0.15, status:"warning"
+      proximity:58, penetrationFactor:0.60, spreadCaptureFactor:0.00, falloutRate:0.05, repeatUplift:0.02, brandDamageRate:0.15, status:"warning"
     },
     virtualcaptive: {
       label:"Estimated cost due to portfolio losses mostly avoided with Virtual Captive™ model", desc:"You already run a full captive or Virtual Captive™ finance program",
-      proximity:95, penetrationFactor:0.85, spreadCaptureFactor:0.90, falloutRate:0.01, repeatUplift:0.07, brandDamageRate:0.05, status:"good"
+      proximity:95, penetrationFactor:0.85, spreadCaptureFactor:0.97, falloutRate:0.01, repeatUplift:0.07, brandDamageRate:0.05, status:"good"
     }
   };
   var STAGE_ORDER = ["none","dealer","thirdparty","virtualcaptive"];
