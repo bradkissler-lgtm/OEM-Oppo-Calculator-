@@ -429,7 +429,7 @@
               <dt>Lost sales</dt><dd>Deals that fall through — or go to a competing brand — because financing wasn't fast, flexible, or available enough at the point of sale.</dd>
               <dt>Brand impact</dt><dd>Customers who do get financed, but through a toxic experience — slow, opaque, or misaligned with their interests — bad enough to cost you their next purchase, including the repeat business you'd otherwise have kept. Highest where a single outside lender runs point-of-sale financing across your whole dealer network.</dd>
             </dl>
-            <p>The brand-impact lever values a lost customer across their next few replacement cycles (not just one missed sale), using your category's typical replacement cycle and an 8% annual discount rate applied over 3 future cycles — the further out a repeat purchase sits, the less it's worth today.</p>
+            <p>The brand-impact lever values a lost customer across their next few replacement cycles (not just one missed sale), using your category's typical replacement cycle and an 8% annual discount rate applied over 2.5 future cycles — the further out a repeat purchase sits, the less it's worth today.</p>
             <p>Inputs used for this estimate:</p>
             <ul id="method-inputs"></ul>
             <p class="footnote" style="margin-top:10px;">These figures are directional planning estimates built from general equipment-finance industry benchmarks, calibrated to your category and inputs above — not a quote, appraisal, or guarantee. Actual results depend on your dealer network, credit mix, and program design.</p>
@@ -447,7 +447,7 @@
   "use strict";
 
   var VERTICALS = {
-    trailers:        { label:"Trailers",                        asp:20000,  margin:0.275, futureMargin:0.025, maxpen:0.75, cycleYears:7 },
+    trailers:        { label:"Trailers",                        asp:20000,  margin:0.275, futureMargin:0.325, maxpen:0.75, cycleYears:7 },
     construction:     { label:"Construction Equipment",          asp:150000, margin:0.15,  futureMargin:0.15,  maxpen:0.65, cycleYears:5 },
     materialHandling: { label:"Material Handling",               asp:35000,  margin:0.20,  futureMargin:0.20,  maxpen:0.62, cycleYears:6 },
     agriculture:      { label:"Agriculture",                     asp:120000, margin:0.16,  futureMargin:0.16,  maxpen:0.66, cycleYears:6 },
@@ -477,13 +477,20 @@
   var STAGE_ORDER = ["none","dealer","thirdparty","virtualcaptive"];
 
   var FULL_SPREAD_RATE = 0.04;    // annual net finance margin captured on funded volume, full captive baseline
-  var CLV_HORIZON_CYCLES = 3;     // number of future replacement cycles a lost customer relationship is valued over
+  var CLV_HORIZON_CYCLES = 2.5;   // number of future replacement cycles a lost customer relationship is valued over
   var CLV_DISCOUNT_RATE = 0.08;   // annual discount rate applied to future replacement-cycle purchases
 
   function clvMultiplier(cycleYears){
+    // Supports a fractional horizon (e.g. 2.5 cycles): full cycles count in
+    // full, and a partial final cycle is weighted by its fractional share.
     var mult = 0;
-    for (var k = 1; k <= CLV_HORIZON_CYCLES; k++){
+    var fullCycles = Math.floor(CLV_HORIZON_CYCLES);
+    for (var k = 1; k <= fullCycles; k++){
       mult += 1 / Math.pow(1 + CLV_DISCOUNT_RATE, k * cycleYears);
+    }
+    var partial = CLV_HORIZON_CYCLES - fullCycles;
+    if (partial > 0) {
+      mult += partial / Math.pow(1 + CLV_DISCOUNT_RATE, (fullCycles + 1) * cycleYears);
     }
     return mult;
   }
@@ -687,7 +694,7 @@
       "<li>Gross margin on units: " + formatPercent(vals.margin) + "%</li>" +
       "<li>Gross margin on future replacement-cycle sales: " + formatPercent(vals.futureMargin) + "%</li>" +
       "<li>Realistic max financing penetration: " + formatPercent(vals.maxpen) + "%</li>" +
-      "<li>Replacement cycle: " + vals.cycleYears + " years (3 future cycles valued at an 8% annual discount rate)</li>" +
+      "<li>Replacement cycle: " + vals.cycleYears + " years (2.5 future cycles valued at an 8% annual discount rate)</li>" +
       "<li>Current financing approach: " + s.label + "</li>";
 
     lastVals = vals;
