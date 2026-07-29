@@ -288,7 +288,7 @@
     <span class="betapill">Calculator</span>
   </div>
   <h1 class="title">OEM - <span class="hl">Financing Gap</span> Cost Calculator</h1>
-  <p class="dek">See what your current financing strategy is likely costing you every year in retained finance income, lost equipment sales, and customer retention — versus what a captive or hybrid captive program would capture.</p>
+  <p class="dek">See what your current financing strategy is likely costing you every year in retained finance income, lost equipment sales, and customer retention — versus what a Virtual Captive™ program would capture.</p>
 
   <div class="stage">
     <!-- INPUT PANEL -->
@@ -367,10 +367,10 @@
         <div class="spectrum">
           <div class="spectrum-track" id="spectrum-track">
             <div class="marker" id="marker-current"><div class="pinlabel" id="marker-current-label"></div><div class="pin"></div></div>
-            <div class="marker ghost" id="marker-target"><div class="pinlabel">Captive / Hybrid</div><div class="pin"></div></div>
+            <div class="marker ghost" id="marker-target"><div class="pinlabel">Virtual Captive™</div><div class="pin"></div></div>
           </div>
           <div class="spectrum-labels">
-            <span>No Program</span><span>Dealer-Arranged</span><span>Third-Party Lender</span><span>Captive / Hybrid</span>
+            <span>No Program</span><span>Dealer-Arranged</span><span>Third-Party Lender</span><span>Virtual Captive™</span>
           </div>
         </div>
 
@@ -413,7 +413,7 @@
         <details class="methodology">
           <summary>How we calculated this</summary>
           <div class="method-body">
-            <p>The estimate is built from four value levers that a captive or hybrid captive program captures and other approaches typically don't. Each is measured as an annual dollar gap versus a full captive baseline:</p>
+            <p>The estimate is built from four value levers that a Virtual Captive™ program captures and other approaches typically don't. Each is measured as an annual dollar gap versus a full captive baseline:</p>
             <dl>
               <dt>Finance income</dt><dd>Interest-rate spread on financed sales that flows to a bank or goes uncaptured today, instead of being retained through your own program.</dd>
               <dt>Lost sales</dt><dd>Deals that fall through — or go to a competing brand — because financing wasn't fast, flexible, or available enough at the point of sale.</dd>
@@ -461,7 +461,7 @@
       proximity:58, penetrationFactor:0.80, spreadCaptureFactor:0.00, falloutRate:0.015, repeatUplift:0.02, brandDamageRate:0.05, status:"warning"
     },
     virtualcaptive: {
-      label:"Estimated cost due to portfolio losses mostly avoided with Virtual Captive™ model", desc:"You already run a full captive or hybrid (virtual) captive finance program",
+      label:"Estimated cost due to portfolio losses mostly avoided with Virtual Captive™ model", desc:"You already run a full captive or Virtual Captive™ finance program",
       proximity:95, penetrationFactor:0.97, spreadCaptureFactor:0.95, falloutRate:0.003, repeatUplift:0.07, brandDamageRate:0.003, status:"good"
     }
   };
@@ -661,7 +661,7 @@
       recoverText.textContent = "Estimated revenue drag due to portfolio losses that can be avoided with the deployment of a Virtual Captive™ — consistent with capturing roughly 95% of full-captive economics.";
     } else {
       recoverAmt.textContent = fmtUSD0.format(Math.round(recoverable));
-      recoverText.textContent = "Estimated amount a captive or hybrid captive program would recover annually, based on your inputs above.";
+      recoverText.textContent = "Estimated amount a Virtual Captive™ program would recover annually, based on your inputs above.";
     }
 
     var methodList = document.getElementById("method-inputs");
