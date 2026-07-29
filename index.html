@@ -219,13 +219,19 @@
   .spectrum{margin-top:6px;}
   .spectrum-track{position:relative;height:8px;border-radius:100px;background:var(--surface-sunken);
     background-image:linear-gradient(to right, var(--critical), var(--warning) 45%, var(--good));
-    opacity:0.85; margin:34px 4px 10px;}
+    opacity:0.85; margin:34px 4px 10px; cursor:pointer;}
+  .spectrum-track::before{content:"";position:absolute;top:-12px;bottom:-12px;left:0;right:0;}
   .spectrum-labels{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-muted);padding:0 2px;text-transform:uppercase;letter-spacing:0.04em;}
   .marker{position:absolute;top:50%;transform:translate(-50%,-50%);}
-  .marker .pin{width:16px;height:16px;border-radius:50%;background:var(--ink-primary);border:3px solid var(--surface-card);box-shadow:0 0 0 1.5px var(--border-strong);}
+  .marker .pin{width:16px;height:16px;border-radius:50%;background:var(--ink-primary);border:3px solid var(--surface-card);box-shadow:0 0 0 1.5px var(--border-strong);transition:left .2s ease;}
   .marker .pinlabel{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;white-space:nowrap;color:var(--ink-primary);background:var(--surface-card-2);padding:3px 8px;border-radius:6px;border:1px solid var(--border);}
   .marker.ghost .pin{background:var(--accent);border-color:var(--surface-card);}
   .marker.ghost .pinlabel{color:var(--accent);border-color:var(--accent-soft);}
+  .marker.current .pin{cursor:grab;touch-action:none;}
+  .marker.current .pin:hover{transform:scale(1.15);}
+  .marker.current .pin:active,.marker.current.dragging .pin{cursor:grabbing;transform:scale(1.15);}
+  .marker.current .pin:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+  .spectrum-hint{font-size:11px;color:var(--ink-muted);margin-top:8px;text-align:center;}
 
   .recover-callout{
     display:flex;align-items:center;gap:14px;background:var(--accent-soft);border:1px solid var(--accent);
@@ -364,12 +370,13 @@
         <h2 class="sec-title">Where you sit today</h2>
         <div class="spectrum">
           <div class="spectrum-track" id="spectrum-track">
-            <div class="marker" id="marker-current"><div class="pinlabel" id="marker-current-label"></div><div class="pin"></div></div>
+            <div class="marker current" id="marker-current"><div class="pinlabel" id="marker-current-label"></div><div class="pin" id="marker-current-pin" tabindex="0" role="slider" aria-label="Current financing approach" aria-valuemin="0" aria-valuemax="3"></div></div>
             <div class="marker ghost" id="marker-target"><div class="pinlabel">Virtual Captive™</div><div class="pin"></div></div>
           </div>
           <div class="spectrum-labels">
             <span>No Program</span><span>Dealer-Arranged</span><span>Third-Party Lender</span><span>Virtual Captive™</span>
           </div>
+          <p class="spectrum-hint">Drag the marker, click the bar, or use arrow keys to compare stages</p>
         </div>
 
         <div class="recover-callout" id="recover-callout">
@@ -640,9 +647,12 @@
     var track = document.getElementById("spectrum-track");
     var curMarker = document.getElementById("marker-current");
     var curLabel = document.getElementById("marker-current-label");
+    var curPin = document.getElementById("marker-current-pin");
     var tgtMarker = document.getElementById("marker-target");
     curMarker.style.left = s.proximity + "%";
     curLabel.textContent = s.label;
+    curPin.setAttribute("aria-valuenow", STAGE_ORDER.indexOf(vals.stageKey));
+    curPin.setAttribute("aria-valuetext", s.label);
     tgtMarker.style.left = STAGES.virtualcaptive.proximity + "%";
     tgtMarker.style.display = (vals.stageKey === "virtualcaptive") ? "none" : "block";
 
@@ -698,6 +708,93 @@
     revenueInput.style.borderColor = "";
     render(vals);
     document.getElementById("result-body").scrollIntoView({ behavior:"smooth", block:"start" });
+  });
+
+  // ---------- Interactive "Where you sit today" spectrum ----------
+  // Once a result exists, the marker can be dragged, the track clicked, or
+  // arrow keys used to jump between stages — each re-renders the estimate
+  // live and keeps the input-panel stage cards in sync.
+  var spectrumTrackEl = document.getElementById("spectrum-track");
+  var currentMarkerEl = document.getElementById("marker-current");
+  var currentPinEl = document.getElementById("marker-current-pin");
+
+  function syncStageCard(stageKey){
+    var radio = document.querySelector('input[name="stage"][value="' + stageKey + '"]');
+    if (!radio) return;
+    radio.checked = true;
+    Array.prototype.forEach.call(stageOptionsEl.querySelectorAll(".stage-card"), function(c){ c.classList.remove("selected"); });
+    radio.closest(".stage-card").classList.add("selected");
+  }
+
+  function selectStageFromSpectrum(stageKey){
+    if (!lastVals || stageKey === lastVals.stageKey) return;
+    syncStageCard(stageKey);
+    var vals = {
+      revenue: lastVals.revenue, asp: lastVals.asp, margin: lastVals.margin,
+      maxpen: lastVals.maxpen, cycleYears: lastVals.cycleYears,
+      verticalKey: lastVals.verticalKey, stageKey: stageKey
+    };
+    render(vals);
+  }
+
+  function closestStageForPercent(pct){
+    var closestKey = STAGE_ORDER[0];
+    var closestDist = Infinity;
+    STAGE_ORDER.forEach(function(key){
+      var dist = Math.abs(STAGES[key].proximity - pct);
+      if (dist < closestDist){ closestDist = dist; closestKey = key; }
+    });
+    return closestKey;
+  }
+
+  function percentFromClientX(clientX){
+    var rect = spectrumTrackEl.getBoundingClientRect();
+    var pct = ((clientX - rect.left) / rect.width) * 100;
+    return Math.max(0, Math.min(100, pct));
+  }
+
+  var draggingSpectrum = false;
+
+  function handleSpectrumPointer(clientX){
+    if (!lastVals) return;
+    selectStageFromSpectrum(closestStageForPercent(percentFromClientX(clientX)));
+  }
+
+  currentPinEl.addEventListener("pointerdown", function(e){
+    if (!lastVals) return;
+    draggingSpectrum = true;
+    currentMarkerEl.classList.add("dragging");
+    currentPinEl.setPointerCapture(e.pointerId);
+    handleSpectrumPointer(e.clientX);
+    e.preventDefault();
+  });
+  currentPinEl.addEventListener("pointermove", function(e){
+    if (!draggingSpectrum) return;
+    handleSpectrumPointer(e.clientX);
+  });
+  currentPinEl.addEventListener("pointerup", function(){
+    draggingSpectrum = false;
+    currentMarkerEl.classList.remove("dragging");
+  });
+
+  spectrumTrackEl.addEventListener("click", function(e){
+    if (e.target === currentPinEl) return;
+    handleSpectrumPointer(e.clientX);
+  });
+
+  currentPinEl.addEventListener("keydown", function(e){
+    if (!lastVals) return;
+    var idx = STAGE_ORDER.indexOf(lastVals.stageKey);
+    if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+      idx = Math.min(STAGE_ORDER.length - 1, idx + 1);
+      e.preventDefault();
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+      idx = Math.max(0, idx - 1);
+      e.preventDefault();
+    } else {
+      return;
+    }
+    selectStageFromSpectrum(STAGE_ORDER[idx]);
   });
 
   // ---------- Secondary (optional) lead capture — shown after results, never blocks them ----------
